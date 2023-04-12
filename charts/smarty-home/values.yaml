@@ -4,7 +4,7 @@
 global:
   # This section is needed to use NFS for storage
   nfs:
-    server: 192.168.1.163
+    server: YOUR_NFS_SERVER
   # nfs config path
   configPath: YOUR_CONFIG_PATH
   # local storage path such as /mnt/d/kubestore
@@ -20,3 +20,13 @@ global:
 ##################
 enableTraefikRoutes: true
 enablek8sDashboard: true
+
+#######################################
+# Service config - NFS optional mount #
+#######################################
+homeassist:
+  # Use configPath for NFS... permission issues with nfs creation though
+  # configPath: postgres
+  # Use hostPath for local storage
+  hostPath: homeassist
+  fullnameOverride: homeassist

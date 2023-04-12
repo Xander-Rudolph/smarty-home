@@ -18,4 +18,4 @@ service:
 serviceAccount:
   create: true
   annotations: {}
-  name: "radarr"
+  name: "homeassist"

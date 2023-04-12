@@ -1,6 +1,6 @@
 apiVersion: v2
 name: homeassist
-description: A Helm chart for deploying the radarr front end
+description: A Helm chart for deploying homeassistant
 type: application
 version: 0.0.1
 appVersion: "0.0.1"
