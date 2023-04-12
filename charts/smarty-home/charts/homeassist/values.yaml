@@ -1,0 +1,21 @@
+image:
+  repository: ghcr.io/home-assistant/home-assistant
+  tag: "stable"
+  pullPolicy: Always
+  containerPort: 7878
+  hostname: homeassist
+  # env:
+  #   - name: TZ
+  #     value: UTC
+
+
+config:
+  UrlBase: /assistant
+
+service:
+  type: ClusterIP
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "radarr"

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: smarty-home
+description: A Helm chart for a variety of home assistant tools 
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+dependencies:
+  - name: homeassist
+    version: "^0"
+    repository: "file://./charts/homeassist"

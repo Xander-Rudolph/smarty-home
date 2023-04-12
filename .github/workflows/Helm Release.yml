@@ -1,0 +1,93 @@
+name: Release Charts
+
+on:
+  pull_request:
+  push:
+    paths:
+      - ./charts/**  
+      - ./.github/workflows/**
+        
+jobs:
+  review:
+    if: ${{ github.event_name == 'pull_request' }}
+    permissions: write-all # Check permission when leave comment action failed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: OpenAI PR Review
+        uses: detectiveCrow/ai-review-action@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # LANGUAGE: "english"
+          # MODEL: "gpt-3.5-turbo"
+
+  scan:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run chart-testing (lint)
+        id: lint
+        uses: helm/chart-testing-action@v1.0.0
+        with:
+          command: lint
+          config: ./.github/workflows/workflowconfig.yaml
+
+  test-version:
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.0.0
+        with:
+          install_local_path_provisioner: true
+
+      - name: Run chart-testing (install)
+        uses: helm/chart-testing-action@v1.0.0
+        with:
+          command: install
+          config: ./.github/workflows/workflowconfig.yaml
+
+  release:
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    needs: test-version
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.10.0
+
+      - name: Split repo name
+        id: split
+        env:
+          REPO: ${{ github.repository }}
+        run: echo "repoName=fragment::${REPO##*/}" >> $GITHUB_OUTPUT
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.4.1
+        with:
+          charts_dir: charts
+          charts_repo_url: https://${{ github.repository_owner }}.github.io/${{ steps.split.outputs.repoName }}/
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: true

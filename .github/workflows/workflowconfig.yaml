@@ -1,0 +1,6 @@
+helm-extra-args: --timeout 600s
+chart-dirs:
+  - charts
+chart-repos:
+  - smarty-home=https://xander-rudolph.github.io/smart-home/
+  
