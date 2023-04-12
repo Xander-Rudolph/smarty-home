@@ -8,7 +8,6 @@ image:
   #   - name: TZ
   #     value: UTC
 
-
 config:
   UrlBase: /assistant
 
