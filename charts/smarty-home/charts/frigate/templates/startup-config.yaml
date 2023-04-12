@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: "{{ include ".helm.fullname" . }}-startup"
 data:
-  config.xml: |
+  config.yml: |
     <Config>
       <UrlBase>{{ .Values.config.UrlBase }}</UrlBase>
     </Config>

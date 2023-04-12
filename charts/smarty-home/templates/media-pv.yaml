@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-media-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  {{- if eq .Values.debug.useLocalStore true }}
+  capacity:
+    storage: {{ .Values.debug.mediaCapacity }}
+  {{ else }}
+  capacity:
+    storage: {{ .Values.global.mediaCapacity }}
+  {{- end}}
+  {{- if eq .Values.debug.useLocalStore true }}
+  hostPath:
+    path: {{ .Values.global.hostPath }}/media
+  {{ else }}
+  nfs:
+    path: {{ .Values.global.mediaPath }}
+    server: {{ .Values.global.nfs.server }}
+  mountOptions:
+    - nfsvers=4.1
+  {{- end }}  
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-media-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      {{- if eq .Values.debug.useLocalStore true }}
+      storage: {{ .Values.debug.mediaCapacity }}
+      {{ else }}
+      storage: {{ .Values.global.mediaCapacity }}
+      {{- end}}
+  selector: {}
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: {{ .Release.Name }}-media-pv

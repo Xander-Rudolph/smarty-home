@@ -37,3 +37,10 @@ frigate:
   # Use hostPath for local storage
   hostPath: frigate
   fullnameOverride: frigate
+
+mosquitto:
+  # Use configPath for NFS... permission issues with nfs creation though
+  # configPath: postgres
+  # Use hostPath for local storage
+  hostPath: mosquitto
+  fullnameOverride: mosquitto

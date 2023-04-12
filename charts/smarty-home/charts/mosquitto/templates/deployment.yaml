@@ -25,15 +25,15 @@ spec:
       serviceAccountName: {{ include ".helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # initContainers:
-      # - name: set-conf-yml
-      #   image: busybox:latest
-      #   volumeMounts:
-      #     - name: config-vol
-      #       mountPath: /config
-      #     - name: file-config
-      #       mountPath: /preload        
-      #   command: ['sh', '-c', "cat /preload/config.yml > /config/config.yml"]
+      initContainers:
+      - name: set-conf
+        image: busybox:latest
+        volumeMounts:
+          - name: config-vol
+            mountPath: /config
+          - name: file-config
+            mountPath: /preload        
+        command: ['sh', '-c', "cat /preload/mosquitto.conf > /config/mosquitto.conf"]
       containers:
         - name: {{ include ".helm.fullname" . }}
           securityContext:
@@ -48,24 +48,21 @@ spec:
             - configMapRef:
                 name: "{{ .Release.Name }}-configmap"
           args: [ {{.Values.image.args}} ]
-          ports:
-            - name: http
-              containerPort: {{ .Values.image.containerPort }}
-              protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          # volumeMounts:
-          #   - name: config-vol
-          #     mountPath: /config
-          #   - name: media-vol
-          #     mountPath: /media/frigate
+          volumeMounts:
+            - name: config-vol
+              mountPath: /mosquitto/config
       volumes:
         - name: config-vol
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-{{ include ".helm.fullname" . }}-pvc
-        - name: media-vol
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-media-pvc            
+        - name: file-config
+          configMap:
+            name: "{{ include ".helm.fullname" . }}-startup"
+            items:
+            - key: mosquitto.conf
+              path: mosquitto.conf
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

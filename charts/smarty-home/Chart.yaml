@@ -8,3 +8,9 @@ dependencies:
   - name: homeassist
     version: "^0"
     repository: "file://./charts/homeassist"
+  - name: frigate
+    version: "^0"
+    repository: "file://./charts/frigate"
+  - name: mosquitto
+    version: "^0"
+    repository: "file://./charts/mosquitto"
