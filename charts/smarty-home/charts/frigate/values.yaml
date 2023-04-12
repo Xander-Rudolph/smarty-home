@@ -1,15 +1,15 @@
 image:
-  repository: ghcr.io/home-assistant/home-assistant
+  repository: ghcr.io/blakeblackshear/frigate
   tag: "stable"
   pullPolicy: Always
-  containerPort: 8123
-  hostname: homeassist
+  containerPort: 5000
+  hostname: frigate
   # env:
   #   - name: TZ
   #     value: UTC
 
 config:
-  UrlBase: /assistant
+  UrlBase: /nvr
 
 service:
   type: ClusterIP
@@ -17,4 +17,4 @@ service:
 serviceAccount:
   create: true
   annotations: {}
-  name: "homeassist"
+  name: "frigate"
