@@ -33,7 +33,7 @@ spec:
             mountPath: /config
           - name: file-config
             mountPath: /preload        
-        command: ['sh', '-c', "cat /preload/config.yml > /config/config.yml"]
+        command: ['sh', '-c', "if [ ! -f /config/config.yml ]; then cat /preload/config.yml > /config/config.yml; fi"]
       containers:
         - name: {{ include ".helm.fullname" . }}
           securityContext:
@@ -58,7 +58,7 @@ spec:
             - name: config-vol
               mountPath: /config
             - name: media-vol
-              mountPath: /media/frigate
+              mountPath: /media
       volumes:
         - name: config-vol
           persistentVolumeClaim:

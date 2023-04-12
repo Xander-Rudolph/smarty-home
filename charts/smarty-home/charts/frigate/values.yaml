@@ -9,7 +9,7 @@ image:
   #     value: UTC
 
 config:
-  UrlBase: /nvr
+  UrlBase: nvr
 
 service:
   type: ClusterIP

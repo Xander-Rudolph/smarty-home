@@ -7,6 +7,8 @@ debug:
 # Global config #
 #################
 global:
+  # this determines if routes will be creates for the child services
+  enableTraefikRoutes: true
   # This section is needed to use NFS for storage
   nfs:
     server: YOUR_NFS_SERVER
@@ -18,36 +20,31 @@ global:
   # media NFS path
   mediaPath: YOUR_MEDIA_PATH
   mediaCapacity: 15Ti # total capacity of your NFS media share (unless you want a buffer)
-  # linuxserver common variables
+  # linuxs common variables
   timezone: Etc/UTC
   PGID: 0
   PUID: 0
 
-##################
-# Network config #
-##################
-enableTraefikRoutes: true
-
 #######################################
 # Service config - NFS optional mount #
 #######################################
-homeassist:
-  # Use configPath for NFS... permission issues with nfs creation though
-  # configPath: postgres
-  # Use hostPath for local storage
-  hostPath: homeassist
-  fullnameOverride: homeassist
-
 frigate:
-  # Use configPath for NFS... permission issues with nfs creation though
-  # configPath: postgres
   # Use hostPath for local storage
-  hostPath: frigate
+  # hostPath: frigate
+  # Use configPath for NFS... permission issues with nfs creation though
+  configPath: frigate
   fullnameOverride: frigate
 
-mosquitto:
-  # Use configPath for NFS... permission issues with nfs creation though
-  # configPath: postgres
+homeassist:
   # Use hostPath for local storage
-  hostPath: mosquitto
+  # hostPath: homeassist
+  # Use configPath for NFS... permission issues with nfs creation though
+  configPath: homeassist
+  fullnameOverride: homeassist
+
+mosquitto:
+  # Use hostPath for local storage
+  # hostPath: mosquitto
+  # Use configPath for NFS... permission issues with nfs creation though
+  configPath: mosquitto
   fullnameOverride: mosquitto

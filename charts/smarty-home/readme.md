@@ -5,6 +5,8 @@ This chart assumes that traefik is installed and creates ingress routes based on
 If traefik is not installed or ingress routes need to be disabled, set the following line to false in the values.yaml file:
 `enableTraefikRoutes: true`
 
+If you are running the traefik dashboard, it needs to be disabled or the ingress routes will get confused on /api. Both Traefik and Frigate use the /api route
+
 ## Exposed paths
 `/nvr`
 `/assistant`

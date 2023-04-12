@@ -4,19 +4,17 @@ metadata:
   name: "{{ include ".helm.fullname" . }}-startup"
 data:
   config.yml: |
-    mqtt:
-      host: mqtt
-
     cameras:
-      test:
+      rtsp_cam:
         ffmpeg:
+          output_args:
+            record: preset-record-generic-audio-copy
           inputs:
-            - path: /media/frigate/car-stopping.mp4
-              input_args: -re -stream_loop -1 -fflags +genpts
+            - path: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4 # <--- the name here must match the name of the camera in restream
+              input_args: preset-rtsp-restream
+              roles:
+                - record
+            - path: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4 # <--- the name here must match the name of the camera_sub in restream
+              input_args: preset-rtsp-restream
               roles:
                 - detect
-                - rtmp
-        detect:
-          height: 1080
-          width: 1920
-          fps: 5

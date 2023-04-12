@@ -3,7 +3,18 @@ kind: ConfigMap
 metadata:
   name: "{{ include ".helm.fullname" . }}-startup"
 data:
-  config.xml: |
-    <Config>
-      <UrlBase>{{ .Values.config.UrlBase }}</UrlBase>
-    </Config>
+  configuration.yaml: |
+    # Loads default set of integrations. Do not remove.
+    default_config:
+
+    # Load frontend themes from the themes folder
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    # Text to speech
+    tts:
+      - platform: google_translate
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml

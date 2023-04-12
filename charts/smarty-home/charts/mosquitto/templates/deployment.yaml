@@ -33,7 +33,7 @@ spec:
             mountPath: /config
           - name: file-config
             mountPath: /preload        
-        command: ['sh', '-c', "cat /preload/mosquitto.conf > /config/mosquitto.conf"]
+        command: ['sh', '-c', "if [ ! -f /config/mosquitto.conf ]; then cat /preload/mosquitto.conf > /config/mosquitto.conf; fi"]
       containers:
         - name: {{ include ".helm.fullname" . }}
           securityContext:

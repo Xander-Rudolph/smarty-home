@@ -7,7 +7,24 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: (PathPrefix("{{ .Values.config.UrlBase }}"))
+    - match: PathPrefix("/{{ .Values.config.UrlBase }}")
+      kind: Rule
+      services:
+        - name: {{ include ".helm.fullname" . }}
+          kind: Service
+          port: {{ .Values.image.containerPort }}
+      middlewares:
+      - name: "{{ include ".helm.fullname" . }}-strip"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: "{{ include ".helm.fullname" . }}-route-video"
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix("/assets","/api","/live")
       kind: Rule
       services:
         - name: {{ include ".helm.fullname" . }}

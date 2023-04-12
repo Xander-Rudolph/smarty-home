@@ -9,7 +9,7 @@ image:
   #     value: UTC
 
 config:
-  UrlBase: /assistant
+  UrlBase: assistant
 
 service:
   type: ClusterIP
