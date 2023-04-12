@@ -25,15 +25,15 @@ spec:
       serviceAccountName: {{ include ".helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # initContainers:
-      # - name: set-conf-yml
-      #   image: busybox:latest
-      #   volumeMounts:
-      #     - name: config-vol
-      #       mountPath: /config
-      #     - name: file-config
-      #       mountPath: /preload        
-      #   command: ['sh', '-c', "cat /preload/config.yml > /config/config.yml"]
+      initContainers:
+      - name: set-conf-yml
+        image: busybox:latest
+        volumeMounts:
+          - name: config-vol
+            mountPath: /config
+          - name: file-config
+            mountPath: /preload        
+        command: ['sh', '-c', "cat /preload/config.yml > /config/config.yml"]
       containers:
         - name: {{ include ".helm.fullname" . }}
           securityContext:
@@ -54,11 +54,11 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          # volumeMounts:
-          #   - name: config-vol
-          #     mountPath: /config
-          #   - name: media-vol
-          #     mountPath: /media/frigate
+          volumeMounts:
+            - name: config-vol
+              mountPath: /config
+            - name: media-vol
+              mountPath: /media/frigate
       volumes:
         - name: config-vol
           persistentVolumeClaim:
@@ -66,6 +66,12 @@ spec:
         - name: media-vol
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-media-pvc            
+        - name: file-config
+          configMap:
+            name: "{{ include ".helm.fullname" . }}-startup"
+            items:
+            - key: config.yml
+              path: config.yml
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
